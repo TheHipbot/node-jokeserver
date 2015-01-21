@@ -24,10 +24,10 @@ var serverInfo = {
 ioClient.on('connection', function (socket) {
     socket.on('request', function (data) {
         if (!serverInfo.clients[data.id]) {
-            serverInfo.clients[data.id] = {};
             socket.emit('get name');
         } else {
             socket.emit('response', { message: "test" });
+            console.log("Response sent to " + serverInfo.clients[data.id].name);
         }
     });
 
