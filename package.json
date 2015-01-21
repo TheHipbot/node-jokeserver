@@ -1,0 +1,23 @@
+{
+  "name": "node-jokeserver",
+  "version": "1.0.0",
+  "description": "A Joke server built on NodeJS",
+  "main": "JokeServer.js",
+  "dependencies": {
+    "socket.io": "^1.3.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TheHipbot/node-jokeserver.git"
+  },
+  "author": "Jerome TheHipbot Chamborg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TheHipbot/node-jokeserver/issues"
+  },
+  "homepage": "https://github.com/TheHipbot/node-jokeserver"
+}
