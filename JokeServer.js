@@ -23,11 +23,11 @@ var serverInfo = {
 
 ioClient.on('connection', function (socket) {
     socket.on('request', function (data) {
-        if (!serverInfo.clients[data]) {
-            serverInfo.clients[data] = {};
+        if (!serverInfo.clients[data.id]) {
+            serverInfo.clients[data.id] = {};
             socket.emit('get name');
         } else {
-
+            socket.emit('response', { message: "test" });
         }
     });
 
@@ -41,7 +41,14 @@ ioClient.on('connection', function (socket) {
 });
 
 ioAdmin.on('connection', function (socket) {
-    socket.on();
+    socket.on('get state', function (data) {
+        socket.emit('state', { state: serverInfo.state });
+    });
+
+    socket.on('change state', function (data) {
+        serverInfo.state = data.state;
+        socket.emit('state', { state: serverInfo.state });
+    });
 });
 
 function clientListener (req, resp) {

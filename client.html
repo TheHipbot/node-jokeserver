@@ -3,8 +3,47 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <style>
+        .jumbotron {
+            margin-top: 20px;
+        }
+    </style>
 </head>
-<body>
-    <h1>Client</h1>
+<body role="document">
+    <div class="container theme-showcase" role="main">
+        <div class="jumbotron">
+            <h1>Client</h1>
+            <div id="response">
+                <p></p>
+            </div>
+        </div>
+        <div id="forms">
+
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+    <script>
+        var socket = io('http://localhost');
+        var id = 5;
+
+        socket.emit('request', { id: id });
+
+        socket.on('get name', function () {
+            $('#forms').append('<form id="name" class="form-inline"><input id="name-form" type="text" class="form-control" /><button type="button" class="btn btn-default">Submit</button></form>');
+            $('#name').submit(function() {
+                socket.emit('set name', { id: id, name: $('#name input').val()});
+                $('#name').remove();
+                socket.emit('request', { id: id });
+            });
+        });
+
+        socket.on('response', function (data) {
+            console.log('response: ' + data);
+            $('#response').text(data.message);
+        });
+    </script>
 </body>
 </html>
