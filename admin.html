@@ -3,13 +3,46 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <style>
+        .jumbotron {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Admin</h1>
+    <div class="container theme-showcase" role="main">
+        <div class="jumbotron">
+            <h1>JokeServer Admin 1.0</h1>
+            <br>
+            <button id="shutdown" type="button" class="btn btn-default">Shutdown Server</button>
+            <br>
+            <select id="mode" class="form-control">
+                <option value="0">Jokes</option>
+                <option value="0">Proverbs</option>
+                <option value="2">Maintenance</option>
+            </select>
+            <br>
+        </div>
+    </div>
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
     <script>
         var socket = io('http://localhost');
+
+        $('#shutdown').click(function() {
+            socket.emit('shutdown');
+        });
+
+        $('#mode').change(function() {
+            socket.emit('change state', { state: $('#mode').val() });
+        });
+
+        socket.on('state', function(data) {
+            $('#mode').val(data.state);
+        });
+
     </script>
 </body>
 </html>

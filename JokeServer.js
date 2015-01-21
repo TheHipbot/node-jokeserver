@@ -48,6 +48,11 @@ ioAdmin.on('connection', function (socket) {
     socket.on('change state', function (data) {
         serverInfo.state = data.state;
         socket.emit('state', { state: serverInfo.state });
+        console.log("State change to " + serverInfo.state);
+    });
+
+    socket.on('shutdown', function() {
+        console.log('Shutdown request received');
     });
 });
 
