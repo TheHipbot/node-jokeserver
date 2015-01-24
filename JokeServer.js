@@ -79,7 +79,7 @@ ioClient.on('connection', function (socket) {
                 message = (serverInfo.state === 'jokes') ?  jokes[r] : proverbs[r];
 
                 // send response
-                socket.emit('response', {message: message});
+                socket.emit('response', {message: serverInfo.clients[data.id].name + ', ' + message});
                 serverInfo.clients[data.id][serverInfo.state][r] = true;
             }
         }
