@@ -1,3 +1,36 @@
+/**--------------------------------------------------------
+
+ 1. Jeremy Chambers / 2015-01-24
+
+ 2. NodeJS 0.10.35
+
+ 3. Precise command-line run examples / instructions:
+
+    Requires NodeJS, available here: http://nodejs.org/
+
+    If you have pulled the code down from github, you must
+    first run `npm install` to install required node modules
+
+ e.g.:
+
+ > node JokeServer.js
+
+
+ 4. Precise examples / instructions to run this program:
+
+ e.g.:
+
+ While node server is running, visit the server through your browser
+
+ > http://localhost:4502 for client
+ > http://localhost:9506 for admin
+
+ If you would like to connect to the server from another computer on the
+ same network replace 'localhost' with the local IP address of the server computer
+
+
+ ----------------------------------------------------------*/
+
 var http = require('http');
 var fs = require('fs');
 var io = require('socket.io');
