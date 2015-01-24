@@ -34,14 +34,28 @@
     <script>
         var socket = io('http://localhost');
 
+        /**
+         * event handler for click to shutdown button
+         * on click we send shutdown event to server socket
+         */
         $('#shutdown').click(function() {
             socket.emit('shutdown');
         });
 
+        /**
+         * event handler for change to dropdown for mode
+         * on change we send change state event to server socket
+         */
         $('#mode').change(function() {
             socket.emit('change state', { state: $('#mode').val() });
         });
 
+        /**
+         * Listen for state event from server socket, this
+         * signifies that state has been changed from outside
+         * of current client, so we update the dropdown to reflect
+         * current server stat
+         */
         socket.on('state', function(data) {
             $('#mode').val(data.state);
         });

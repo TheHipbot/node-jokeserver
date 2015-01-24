@@ -2,7 +2,7 @@ var http = require('http');
 var fs = require('fs');
 var io = require('socket.io');
 
-// create http servers for ports to serve up client side code
+// create http listeners for ports to serve up client side code
 var client = http.createServer(clientListener).listen(4502, function () {
     console.log("Client Listening on port 4502\n");
 });
@@ -37,8 +37,19 @@ var proverbs = [
     "A poor workman always blames his tools\n"
 ];
 
+/**
+ * Create client socket, socket.io uses an event base model for
+ * socket communication. The outer layer defines the connection
+ * and the inner layers define the events the server should listen
+ * for and what to do upon receiving each type of request
+ */
 ioClient.on('connection', function (socket) {
+    /**
+     * Listen for request event, client socket has
+     * requested a message
+     */
     socket.on('request', function (data) {
+        // if new user, request name
         if (!serverInfo.clients[data.id]) {
             socket.emit('get name');
         } else {
@@ -46,10 +57,12 @@ ioClient.on('connection', function (socket) {
                 r = Math.floor(Math.random() * 5),
                 allUsed = true;
 
+            // check state
             if (serverInfo.state === 'maintenance') {
                 socket.emit('response', { message: "Server Maintenance, please try again later" });
             } else {
 
+                // check to see if used responses must be reset
                 for (var i = 0; i < 5; i++) {
                     allUsed = allUsed && serverInfo.clients[data.id][serverInfo.state][i];
                 }
@@ -58,18 +71,25 @@ ioClient.on('connection', function (socket) {
                     serverInfo.clients[data.id][serverInfo.state] = [false, false, false, false, false];
                 }
 
+                // find valid random message
                 while (serverInfo.clients[data.id][serverInfo.state][r]) {
                     r = Math.floor(Math.random() * 5);
                 }
 
                 message = (serverInfo.state === 'jokes') ?  jokes[r] : proverbs[r];
 
+                // send response
                 socket.emit('response', {message: message});
                 serverInfo.clients[data.id][serverInfo.state][r] = true;
             }
         }
     });
 
+    /**
+     * Listen for set name event from client socket,
+     * client has set name so we create a new record for the
+     * client
+     */
     socket.on('set name', function (data) {
         serverInfo.clients[data.id] = {
             name: data.name,
@@ -79,22 +99,43 @@ ioClient.on('connection', function (socket) {
     });
 });
 
+/**
+ * Create admin socket and events to listen for
+ */
 ioAdmin.on('connection', function (socket) {
+    /**
+     * Listen for get state event from client socket,
+     * state has been requested, send state to client
+     */
     socket.on('get state', function (data) {
         socket.emit('state', { state: serverInfo.state });
     });
 
+    /**
+     * Listen for change state event from client socket,
+     * update the state and notify all admin clients connected
+     */
     socket.on('change state', function (data) {
         serverInfo.state = data.state;
         ioAdmin.sockets.emit('state', { state: serverInfo.state });
         console.log("State change to " + serverInfo.state);
     });
 
+    /**
+     * Shutdown has been requested, close socket
+     */
     socket.on('shutdown', function() {
-        console.log('Shutdown request received');
+        socket.close();
     });
 });
 
+/**
+ * http listeners for admin and client jokeclients
+ * here is where we serve up html and client socket code
+ *
+ * @param req request data from client
+ * @param resp response data to send to client
+ */
 function clientListener (req, resp) {
     if (req.url !== '/favicon.ico') {
         // console logging

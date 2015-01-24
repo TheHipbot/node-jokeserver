@@ -44,14 +44,27 @@
             };
         })()();
 
+        /**
+         * Listen for response event from server, this will contain
+         * message from server depending on current mode,
+         * we add it to a table on the page along with the
+         * timestamp
+         */
         socket.on('response', function (data) {
             console.log('response: ' + data);
             $('#response').prepend('<tr><td>' + new Date() + '</td><td>' + data.message + '</td></tr>');
         });
 
+        /**
+         * Listen for get name event from server, server has requested name,
+         * so a name form is appended to the page. Server will not respond
+         * until a valid name is entered
+         */
         socket.on('get name', function () {
             $('#forms').before('<div class="alert alert-warning" role="alert">You must enter your name before you can receive responses</div>')
                     .append('<form id="name" class="form-inline"><input id="name-form" type="text" class="form-control" /><button type="submit" class="btn btn-default">Submit</button></form>');
+
+            // when name form is submitted, we send name to the server, then make a new request
             $('#name').submit(function(e) {
                 e.preventDefault();
                 socket.emit('set name', { id: uuid, name: $('#name input').val()});
@@ -60,10 +73,18 @@
             });
         });
 
+        /**
+         * Listen for disconnect from server socket, notify
+         * user if connection has been lost
+         */
         socket.on('disconnect', function () {
             $('#request').before('<div class="alert alert-danger" role="alert">Connection to server has been lost</div>')
         });
 
+        /**
+         * When request button is clicked, we send request event to
+         * server socket
+         */
         $(function() {
             $('#request').click(function() {
                 socket.emit('request', { id: uuid });
